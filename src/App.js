@@ -1,24 +1,23 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
+import Header from "./components/Header";
 import Navigation from "./components/Navigation";
-import Add from "./components/pages/Add";
-import Edit from "./components/pages/Edit";
-import Home from "./components/pages/Home";
-import Video from "./components/pages/Video";
+import TodoList from "./components/TodoList";
 
 function App() {
     return (
-        <Router>
+        <div className="grid place-items-center bg-blue-100 h-screen px-6 font-sans">
             <Navigation />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/videos/:videoId" element={<Video />} />
-                <Route path="/videos/add" element={<Add />} />
-                <Route path="/videos/edit/:videoId" element={<Edit />} />
-            </Routes>
-            <Footer />
-        </Router>
+            <div className="w-full max-w-3xl shadow-lg rounded-lg p-6 bg-white">
+                <Header /> 
+                    <hr className="mt-4" />
+                    <TodoList />
+                    <hr className="mt-4" />
+                <Footer />
+            </div> 
+        </div>       
     );
 }
 
 export default App;
+

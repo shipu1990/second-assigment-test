@@ -5,63 +5,97 @@ export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:9000",
     }),
-    tagTypes: ["Videos", "Video", "RelatedVideos"],
+    tagTypes: ["todos", "todo"],
     endpoints: (builder) => ({
-        getVideos: builder.query({
-            query: () => "/videos",
-            keepUnusedDataFor: 600,
-            providesTags: ["Videos"],
+        getTodos: builder.query({
+            query: () => "/todos",
+            keepUnusedDataFor:100,
+            providesTags: ["todos"],
         }),
-        getVideo: builder.query({
-            query: (videoId) => `/videos/${videoId}`,
-            providesTags: (result, error, arg) => [{ type: "Video", id: arg }],
+        getTodo: builder.query({
+            query: (id) => `/todos/${id}`,
+            providesTags: (result, error, arg) => [{ type: "todo", id: arg }],
         }),
-        getRelatedVideos: builder.query({
-            query: ({ id, title }) => {
-                const tags = title.split(" ");
-                const likes = tags.map((tag) => `title_like=${tag}`);
-                const queryString = `/videos?${likes.join("&")}&_limit=4`;
-                return queryString;
-            },
-            providesTags: (result, error, arg) => [
-                { type: "RelatedVideos", id: arg.id },
-            ],
-        }),
-        addVideo: builder.mutation({
+        addTodo: builder.mutation({
             query: (data) => ({
-                url: "/videos",
+                url: "/todos",
                 method: "POST",
                 body: data,
             }),
-            invalidatesTags: ["Videos"],
+            invalidatesTags:(result, error, arg) => [
+            "Todos",
+                { type: "todos", id: arg.id },
+            ],
         }),
-        editVideo: builder.mutation({
+        deleteTodo: builder.mutation({
+            query: (id) => ({
+                url: `/todos/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["todos"],
+        }),
+        editTodo: builder.mutation({
             query: ({ id, data }) => ({
-                url: `/videos/${id}`,
+                url: `/todos/${id}`,
                 method: "PATCH",
                 body: data,
             }),
-            invalidatesTags: (result, error, arg) => [
-                "Videos",
-                { type: "Video", id: arg.id },
-                { type: "RelatedVideos", id: arg.id },
-            ],
+            invalidatesTags: ["todos"],
         }),
-        deleteVideo: builder.mutation({
-            query: (id) => ({
-                url: `/videos/${id}`,
-                method: "DELETE",
+        updateTodoColor: builder.mutation({
+            query: ({ id, data }) => ({
+                url: `/todos/${id}`,
+                method: "PATCH",
+                body: data,
             }),
-            invalidatesTags: ["Videos"],
+            invalidatesTags: ["todos"],
         }),
+       
+        // getRelatedVideos: builder.query({
+        //     query: ({ id, title }) => {
+        //         const tags = title.split(" ");
+        //         const likes = tags.map((tag) => `title_like=${tag}`);
+        //         const queryString = `/videos?${likes.join("&")}&_limit=4`;
+        //         return queryString;
+        //     },
+        //     providesTags: (result, error, arg) => [
+        //         { type: "RelatedVideos", id: arg.id },
+        //     ],
+        // }),
+        // addVideo: builder.mutation({
+        //     query: (data) => ({
+        //         url: "/videos",
+        //         method: "POST",
+        //         body: data,
+        //     }),
+        //     invalidatesTags: ["Videos"],
+        // }),
+        // editVideo: builder.mutation({
+        //     query: ({ id, data }) => ({
+        //         url: `/videos/${id}`,
+        //         method: "PATCH",
+        //         body: data,
+        //     }),
+        //     invalidatesTags: (result, error, arg) => [
+        //         "Videos",
+        //         { type: "Video", id: arg.id },
+        //         { type: "RelatedVideos", id: arg.id },
+        //     ],
+        // }),
+        // deleteVideo: builder.mutation({
+        //     query: (id) => ({
+        //         url: `/videos/${id}`,
+        //         method: "DELETE",
+        //     }),
+        //     invalidatesTags: ["Videos"],
+        // }),
     }),
 });
 
 export const {
-    useGetVideosQuery,
-    useGetVideoQuery,
-    useGetRelatedVideosQuery,
-    useAddVideoMutation,
-    useEditVideoMutation,
-    useDeleteVideoMutation,
+    useGetTodosQuery,
+    useAddTodoMutation,
+    useDeleteTodoMutation,
+    useEditTodoMutation,
+    useUpdateTodoColorMutation,
 } = apiSlice;
